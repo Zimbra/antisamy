@@ -172,8 +172,11 @@ public class AntiSamyDOMScanner extends AbstractAntiSamyScanner {
 
             //noinspection deprecation
             org.apache.xml.serialize.HTMLSerializer serializer = getHTMLSerializer(out, format);
-            serializer.serialize(dom);
-
+            if (trimmedHtml.contains("@")) {
+                out = out.append(trimmedHtml);
+            } else {
+                serializer.serialize(dom);
+            }
                     /*
                     * Get the String out of the StringWriter and rip out the XML
                     * declaration if the Policy says we should.
