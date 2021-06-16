@@ -170,10 +170,20 @@ public class AntiSamyDOMScanner extends AbstractAntiSamyScanner {
             @SuppressWarnings("deprecation")
             org.apache.xml.serialize.OutputFormat format = getOutputFormat();
 
-            //noinspection deprecation
-            org.apache.xml.serialize.HTMLSerializer serializer = getHTMLSerializer(out, format);
-            serializer.serialize(dom);
-
+            /* Selectively serialize the DocumentFragment only if doesn't
+             * contain any @ symbol which are media queries causing to
+             * whatever content is after @ symbol gets stripped off in the
+             * style tag.
+             * This is reported and accepted as a bug in the antisamy library #24.
+             *
+             */
+            if (trimmedHtml.contains("@")) {
+                out = out.append(trimmedHtml);
+            } else {
+                //noinspection deprecation
+                org.apache.xml.serialize.HTMLSerializer serializer = getHTMLSerializer(out, format);
+                serializer.serialize(dom);
+            }
                     /*
                     * Get the String out of the StringWriter and rip out the XML
                     * declaration if the Policy says we should.
