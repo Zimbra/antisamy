@@ -28,7 +28,7 @@
  <property name='build.data.dir'	value='${build.dir}/data/output' />
  <property name='build.lib.dir'     value='${build.dir}/lib' />
  
- <property name='jar.file'         value='${build.lib.dir}/${name}-${version}z.jar'/>
+ <property name='jar.file'         value='${build.lib.dir}/${name}-${version}z2.jar'/>
  
  <target name='compile'
 		description="compiles the source"
