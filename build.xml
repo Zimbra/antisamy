@@ -4,7 +4,7 @@
  <!-- PROPERTIES -->
  <property file='build-custom.properties' />
  
- <property name='version'   value='1.5.9'/>
+ <property name='version'   value='1.5.8'/>
  <property name='name'      value='antisamy'/>
  <property name='fullname'  value='${name}-${version}'/>
  <property name='Title'     value='OWASP Antisamy'/>
@@ -28,7 +28,7 @@
  <property name='build.data.dir'	value='${build.dir}/data/output' />
  <property name='build.lib.dir'     value='${build.dir}/lib' />
  
- <property name='jar.file'         value='${build.lib.dir}/${name}-${version}z.jar'/>
+ <property name='jar.file'         value='${build.lib.dir}/${name}-${version}z2.jar'/>
  
  <target name='compile'
 		description="compiles the source"
