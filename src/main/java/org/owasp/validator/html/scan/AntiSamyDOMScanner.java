@@ -68,6 +68,10 @@ public class AntiSamyDOMScanner extends AbstractAntiSamyScanner {
             Pattern.compile("[\\u0000-\\u001F\\uD800-\\uDFFF\\uFFFE-\\uFFFF&&[^\\u0009\\u000A\\u000D]]");
     private static final Pattern conditionalDirectives =
             Pattern.compile("<?!?\\[\\s*(?:end)?if[^]]*\\]>?");
+    private static final Pattern styleUnwantedImport =
+            Pattern.compile("@import(\\s)*(([^;\"'\\(]*((\".*?\")|('.*?')|(\\(.*?\\)))[^;]*?)+?|([^;\"'\\(]*?))(;+?|$)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern styleAllImport =
+            Pattern.compile("@import[^$]*$", Pattern.CASE_INSENSITIVE);
 
     private static final Queue<CachedItem> cachedItems = new ConcurrentLinkedQueue<CachedItem>();
 
@@ -178,7 +182,9 @@ public class AntiSamyDOMScanner extends AbstractAntiSamyScanner {
              *
              */
             if (trimmedHtml.contains("@")) {
-                out = out.append(trimmedHtml);
+                String trimmedHtmlWithoutImport = styleUnwantedImport.matcher(trimmedHtml).replaceAll("");
+                trimmedHtmlWithoutImport = styleAllImport.matcher(trimmedHtmlWithoutImport).replaceAll("");
+                out = out.append(trimmedHtmlWithoutImport);
             } else {
                 //noinspection deprecation
                 org.apache.xml.serialize.HTMLSerializer serializer = getHTMLSerializer(out, format);
