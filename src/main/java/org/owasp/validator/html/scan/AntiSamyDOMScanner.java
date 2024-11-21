@@ -97,6 +97,28 @@ public class AntiSamyDOMScanner extends AbstractAntiSamyScanner {
     public AntiSamyDOMScanner() throws PolicyException {
         super();
     }
+    // Method to decode the Unicode escape sequences
+    private String decodeUnicodeEscapes(String input) {  
+        try {
+            StringBuffer decodedString = new StringBuffer();
+            String regex = "\\\\([0-9a-fA-F]{4})";
+            // Compile the regex
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(input);
+
+            // Find all matches and replace them with the decoded character
+            while (matcher.find()) {
+                String hexValue = matcher.group(1);
+                int unicodeValue = Integer.parseInt(hexValue, 16);
+                matcher.appendReplacement(decodedString, String.valueOf((char) unicodeValue));
+            }  
+            matcher.appendTail(decodedString);
+            return decodedString.toString().replaceAll("\\\\", "");
+        } catch (Exception e) {
+            // If decoding fails, just return the original string
+            return input;
+        }
+    }
 
     /**
      * This is where the magic lives.
@@ -167,7 +189,7 @@ public class AntiSamyDOMScanner extends AbstractAntiSamyScanner {
              */
 
 
-            final String trimmedHtml = html;
+            final String trimmedHtml = decodeUnicodeEscapes(html);
 
             StringWriter out = new StringWriter();
 
