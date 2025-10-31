@@ -77,8 +77,8 @@
         <project.java.target>1.8</project.java.target>
         <version.findsecbugs>1.14.0</version.findsecbugs>
         <version.slf4j>2.0.17</version.slf4j>
-        <version.spotbugs.maven>4.9.3.0</version.spotbugs.maven>
-        <version.spotbugs>4.9.3</version.spotbugs>
+        <version.spotbugs.maven>4.8.4</version.spotbugs.maven>
+        <version.spotbugs>4.8.4</version.spotbugs>
     </properties>
 
     <profiles>
@@ -521,8 +521,6 @@
                 <!-- This is the last version that supports Java 8. 2.31.0+ requires Java 11. -->
                 <version>2.30.0</version>
                 <configuration>
-                    <!-- optional: limit format enforcement to just the files changed by this feature branch -->
-                    <ratchetFrom>origin/main</ratchetFrom>
                     <formats>
                         <!-- you can define as many formats as you want, each is independent -->
                         <format>
