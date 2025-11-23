@@ -158,13 +158,20 @@ public class CssParser extends org.apache.batik.css.parser.Parser {
     query.setLogicalOperator(logicalOperator);
 
     if (mediaType == CssMediaType.IMPLIED_ALL) {
-      query.addMediaFeature(parseMediaFeature());
+      CssMediaFeature feature = parseMediaFeature();
+      if (feature != null) {
+      query.addMediaFeature(feature);
     }
+  }
 
     while (current == LexicalUnits.IDENTIFIER && CssMediaQueryLogicalOperator.parse(scanner.getStringValue()) == AND) {
       nextIgnoreSpaces();
-      query.addMediaFeature(parseMediaFeature());
-    }
+      //query.addMediaFeature(parseMediaFeature());
+      CssMediaFeature feature = parseMediaFeature();
+      if (feature != null) {
+      query.addMediaFeature(feature);
+    } 
+  }
     return query;
   }
 
@@ -172,7 +179,8 @@ public class CssParser extends org.apache.batik.css.parser.Parser {
     CssMediaType mediaType;
     mediaType = CssMediaType.parse(scanner.getStringValue());
     if (mediaType == null) {
-      throw createCSSParseException("identifier");
+      mediaType = CssMediaType.ALL;
+      //throw createCSSParseException("identifier");
     }
     nextIgnoreSpaces();
     return mediaType;
@@ -195,8 +203,12 @@ public class CssParser extends org.apache.batik.css.parser.Parser {
   }
 
   protected CssMediaFeature parseMediaFeature() {
+    try {
     if (current != LexicalUnits.LEFT_BRACE) {
-      throw createCSSParseException("'(' expected.");
+      skipUntilRightBrace();
+      nextIgnoreSpaces();
+      return null;
+      //throw createCSSParseException("'(' expected.");
     }
     nextIgnoreSpaces();
     String namePrefix = "";
@@ -205,21 +217,43 @@ public class CssParser extends org.apache.batik.css.parser.Parser {
       namePrefix = "-";
     }
     if (current != LexicalUnits.IDENTIFIER) {
-      throw createCSSParseException("identifier");
+      skipUntilRightBrace();
+      nextIgnoreSpaces();
+      return null;
+      //throw createCSSParseException("identifier");
     }
     String name = namePrefix + scanner.getStringValue();
     nextIgnoreSpaces();
     LexicalUnit exp = null;
     if (current == LexicalUnits.COLON) {
       nextIgnoreSpaces();
+      try {
       exp = parseTerm(null);
+      } catch (Exception termError) {
+        exp = null; // ignore term errors
+      }
     }
     if (current != LexicalUnits.RIGHT_BRACE) {
-      throw createCSSParseException("')' expected.");
+      skipUntilRightBrace();
+      nextIgnoreSpaces();
+      return null;
+      //throw createCSSParseException("')' expected.");
     }
     nextIgnoreSpaces();
 
     return new CssMediaFeature(name, exp);
+  } catch (Exception outer) {
+      // prevent Batik from throwing any parse error
+      skipUntilRightBrace();
+      nextIgnoreSpaces();
+      return null;
+    }
+  }
+
+  private void skipUntilRightBrace() {
+    while (current != LexicalUnits.RIGHT_BRACE && current != LexicalUnits.EOF) {
+      nextIgnoreSpaces();
+    }
   }
 
   @Override
