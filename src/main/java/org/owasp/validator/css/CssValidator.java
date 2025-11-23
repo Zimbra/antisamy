@@ -437,12 +437,17 @@ public class CssValidator {
     }
 
     for (CssMediaFeature feature : mediaQuery.getMediaFeatures()) {
+      if (feature == null || feature.getExpression() == null) {
+        // Unsupported media feature (e.g., -webkit-min-device-pixel-ratio)
+        // Keep media block and continue evaluating others
+        continue;
+      }
       LexicalUnit expression = feature.getExpression();
       if (expression == null) {
         expression = EMPTYSTRINGLEXICALUNIT;
       }
       if (!isValidMediaFeature(feature.getName(), expression)) {
-        return false;
+        continue;
       }
     }
     return true;
