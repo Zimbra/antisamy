@@ -74,5 +74,29 @@
 		<delete dir='${build.dir}' />
  </target>
 
+<target name="sonar-scan" depends="compile" unless="skipSonarScan" description="Run SonarQube analysis">
+
+	<property environment="env"/>
+
+	<fail message="SONAR_HOST_URL environment variable not set" unless="env.SONAR_HOST_URL"/>
+	<fail message="SONAR_TOKEN environment variable not set" unless="env.SONAR_TOKEN"/>
+
+	<pathconvert property="sonar.libraries.list" refid="master-classpath" pathsep=","/>
+
+	<echo message="Running SonarQube scan for ${name}"/>
+
+	<exec executable="sonar-scanner" failonerror="true">
+		<arg value="-Dsonar.projectKey=${name}"/>
+		<arg value="-Dsonar.projectName=${name}"/>
+		<arg value="-Dsonar.projectBaseDir=${basedir}"/>
+		<arg value="-Dsonar.java.source=${compile.source}"/>
+		<arg value="-Dsonar.sources=${src.dir}/main"/>
+		<arg value="-Dsonar.java.binaries=${build.classes.dir}"/>
+		<arg value="-Dsonar.java.libraries=${sonar.libraries.list}"/>
+		<arg value="-Dsonar.tests=${src.dir}/${src.test.dir}"/>
+		<arg value="-Dsonar.host.url=${env.SONAR_HOST_URL}"/>
+		<arg value="-Dsonar.token=${env.SONAR_TOKEN}"/>
+	</exec>
+</target>
 
 </project>
