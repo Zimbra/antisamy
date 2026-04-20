@@ -81,8 +81,7 @@ references:
 
                cd ../antisamy/build
 
-               ORIGINAL_JAR=$(find . -maxdepth 1 -name "*.jar" | head -n 1)
-
+               ORIGINAL_JAR=$(find . -name "*.jar" | head -n 1)
                if [ -z "$ORIGINAL_JAR" ]; then
                  echo "No JAR found!"
                  exit 1
