@@ -69,7 +69,7 @@ references:
             at: ..
 
          - run:
-            name: Publishing antisamy jar
+            name: Publishing antisamy jar..
             command: |
                set -e
                sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
@@ -169,4 +169,4 @@ workflows:
             filters:
                branches:
                  only:
-                   - ZCS-18832
+                   - develop
