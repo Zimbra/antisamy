@@ -69,18 +69,22 @@ references:
             at: ..
 
          - run:
-            name: Publishing antisamy jar using Nexus script
+            name: Publishing antisamy jar
             command: |
                set -e
                sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
 
-               # ===== configurable values =====
+               cd ../antisamy
+
+               # Build artifact version:
+               GIT_TIMESTAMP=$(git log -1 --pretty=format:%at)
+               ARTIFACT_VERSION=$(echo "$BUILD_RELEASE_NO" | cut -d'_' -f1)
+               VERSION="${ARTIFACT_VERSION}.${GIT_TIMESTAMP}"
+
                MODULE="antisamy"
-               BUILD_DIR="../antisamy/build"
+               BUILD_DIR="build"
                JAR_PATTERN="*.jar"
-               VERSION="${BUILD_RELEASE_NO}_${CIRCLE_BUILD_NUM}"
                TARGET_DIR="$HOME/.zcs-deps/zimbra/$MODULE"
-               # ===============================
 
                echo "Preparing the existing JAR for upload (version: $VERSION)"
 
@@ -165,4 +169,4 @@ workflows:
             filters:
                branches:
                  only:
-                   - develop
+                   - ZCS-18832
