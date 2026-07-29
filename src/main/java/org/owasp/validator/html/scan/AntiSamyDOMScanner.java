@@ -72,7 +72,8 @@ public class AntiSamyDOMScanner extends AbstractAntiSamyScanner {
             Pattern.compile("@import(\\s)*(([^;\"'\\(]*((\".*?\")|('.*?')|(\\(.*?\\)))[^;]*?)+?|([^;\"'\\(]*?))(;+?|$)", Pattern.CASE_INSENSITIVE);
     private static final Pattern styleAllImport =
             Pattern.compile("@import[^$]*$", Pattern.CASE_INSENSITIVE);
-
+    private static final Pattern htmlComment = Pattern.compile("<!--[\\s\\S]*?-->");
+	
     private static final Queue<CachedItem> cachedItems = new ConcurrentLinkedQueue<CachedItem>();
 
     static class CachedItem {
@@ -204,8 +205,9 @@ public class AntiSamyDOMScanner extends AbstractAntiSamyScanner {
              *
              */
             if (trimmedHtml.contains("@")) {
-                String trimmedHtmlWithoutImport = styleUnwantedImport.matcher(trimmedHtml).replaceAll("");
-                trimmedHtmlWithoutImport = styleAllImport.matcher(trimmedHtmlWithoutImport).replaceAll("");
+                String trimmedHtmlWithoutImport = styleUnwantedImport.matcher(trimmedHtml).replaceAll("/* removed @ import */");
+                trimmedHtmlWithoutImport = styleAllImport.matcher(trimmedHtmlWithoutImport).replaceAll("/* removed @ import */");
+				trimmedHtmlWithoutImport = htmlComment.matcher(trimmedHtmlWithoutImport).replaceAll("");
                 out = out.append(trimmedHtmlWithoutImport);
             } else {
                 //noinspection deprecation
